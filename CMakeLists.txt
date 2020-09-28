@@ -33,7 +33,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # 3rdparty dependencies
-option(SKUI_USE_IMX8 "Use imx8 platform package" ON)
+option(SKUI_USE_IMX8 "Use imx8 platform package" OFF)
 option(SKUI_USE_PREBUILT_3RDPARTY "Use a prebuilt 3rdparty package" OFF)
 set(SKUI_PREBUILT_3RDPARTY_PATH CACHE STRING "NOTSET")
 option(SKUI_USE_PREBUILT_ZLIB "Use a prebuilt zlib" ${SKUI_USE_PREBUILT_3RDPARTY})
