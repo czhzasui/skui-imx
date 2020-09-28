@@ -30,7 +30,7 @@
 #include <include/effects/SkGradientShader.h>
 #include <include/core/SkPaint.h>
 #ifdef SKUI_USE_IMX8
-#endif()
+#endif
 
 namespace skui::graphics
 {
