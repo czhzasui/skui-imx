@@ -81,7 +81,7 @@ namespace skui::gui::native_window
                XCreateWindow(display.get(),
                              root,
                              static_cast<int>(initial_position.x), static_cast<int>(initial_position.y),
-                             static_cast<unsigned int>(initial_size.width), static_cast<unsigned int>(initial_size.width),
+                             static_cast<unsigned int>(initial_size.width), static_cast<unsigned int>(initial_size.height),
                              0, // border width
                              xvisualinfo->depth,
                              InputOutput,
