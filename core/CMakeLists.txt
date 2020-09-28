@@ -78,9 +78,17 @@ add_library(core
 target_include_directories(core PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>)
 target_compile_definitions(core PUBLIC $<$<CONFIG:Debug>:SKUI_DEBUG>
                                        $<$<PLATFORM_ID:Windows>:NOMINMAX>)
-target_link_libraries(core PUBLIC $<$<PLATFORM_ID:Linux>:-pthread>
-                                  $<$<CXX_COMPILER_ID:GNU>:-lstdc++fs>
-                                  $<$<AND:$<PLATFORM_ID:Windows>,$<AND:$<CXX_COMPILER_ID:Clang>,$<NOT:$<STREQUAL:"x${CMAKE_CXX_SIMULATE_ID}","xMSVC">>>>:-lstdc++fs>
-                                  $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<AND:$<CXX_COMPILER_ID:Clang>,$<AND:$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,7>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9>>>>:-lc++fs>
-                                  $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<AND:$<CXX_COMPILER_ID:Clang>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,7>>>:-lc++experimental>
-                                  $<$<NOT:$<PLATFORM_ID:Windows>>:-ldl>)
+if (NOT SKUI_USE_IMX8)
+    target_link_libraries(core PUBLIC $<$<PLATFORM_ID:Linux>:-pthread>
+            $<$<CXX_COMPILER_ID:GNU>:-lstdc++fs>
+            $<$<AND:$<PLATFORM_ID:Windows>,$<AND:$<CXX_COMPILER_ID:Clang>,$<NOT:$<STREQUAL:"x${CMAKE_CXX_SIMULATE_ID}","xMSVC">>>>:-lstdc++fs>
+            $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<AND:$<CXX_COMPILER_ID:Clang>,$<AND:$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,7>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9>>>>:-lc++fs>
+            $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<AND:$<CXX_COMPILER_ID:Clang>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,7>>>:-lc++experimental>
+            $<$<NOT:$<PLATFORM_ID:Windows>>:-ldl>)
+else ()
+    target_link_libraries(core PUBLIC $<$<PLATFORM_ID:Linux>:-pthread>
+            $<$<AND:$<PLATFORM_ID:Windows>,$<AND:$<CXX_COMPILER_ID:Clang>,$<NOT:$<STREQUAL:"x${CMAKE_CXX_SIMULATE_ID}","xMSVC">>>>:-lstdc++fs>
+            $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<AND:$<CXX_COMPILER_ID:Clang>,$<AND:$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,7>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9>>>>:-lc++fs>
+            $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<AND:$<CXX_COMPILER_ID:Clang>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,7>>>:-lc++experimental>
+            $<$<NOT:$<PLATFORM_ID:Windows>>:-ldl>)
+endif ()
