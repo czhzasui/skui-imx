@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright © 2017-2020 CZH
+ * Copyright © 2019-2020 CZH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
  **/
 
 /*
- * Default window flags for Linux.
+ * Default window flags for imx.
  */
 
 #include "gui/window.h++"
