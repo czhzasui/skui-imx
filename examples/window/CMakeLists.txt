@@ -22,5 +22,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-add_subdirectory(widget_gallery)
-add_subdirectory(window)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} EXAMPLES_WINDOW_SOURCE_FILES)
+
+add_executable(window ${EXAMPLES_WINDOW_SOURCE_FILES})
+
+target_link_libraries(window
+        core
+        gui)
