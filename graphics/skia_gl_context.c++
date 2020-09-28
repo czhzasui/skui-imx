@@ -31,6 +31,7 @@
 #include <include/gpu/gl/GrGLAssembleInterface.h>
 #include <include/gpu/gl/GrGLInterface.h>
 
+#ifndef SKUI_USE_IMX8
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -41,6 +42,10 @@
 #include <GL/gl.h>
 #endif
 #include <GL/glext.h>
+#else
+#include <GLES/gl.h>
+#include <GLES/glext.h>
+#endif
 
 namespace skui::graphics
 {

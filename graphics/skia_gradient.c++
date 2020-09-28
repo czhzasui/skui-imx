@@ -29,6 +29,8 @@
 
 #include <include/effects/SkGradientShader.h>
 #include <include/core/SkPaint.h>
+#ifdef SKUI_USE_IMX8
+#endif()
 
 namespace skui::graphics
 {
@@ -47,23 +49,40 @@ namespace skui::graphics
 
     auto points = convert_to<std::vector<SkPoint>>(linear.points);
     auto colors = convert_to<std::vector<SkColor>>(linear.colors);
-    paint.setShader(SkGradientShader::MakeLinear(points.data(),
-                                                 colors.data(),
-                                                 nullptr,
-                                                 static_cast<int>(points.size()),
-                                                 SkTileMode::kMirror));
+#ifndef SKUI_USE_IMX8
+      paint.setShader(SkGradientShader::MakeLinear(points.data(),
+                                                   colors.data(),
+                                                   nullptr,
+                                                   static_cast<int>(points.size()),
+                                                   SkTileMode::kMirror));
+#else
+      paint.setShader(SkGradientShader::MakeLinear(points.data(),
+                                                   colors.data(),
+                                                   nullptr,
+                                                   static_cast<int>(points.size()),
+                                                   SkShader::TileMode::kMirror_TileMode));
+#endif
   }
 
   void set_gradient(const radial_gradient& radial,
                     SkPaint& paint,
                     const scalar_position& offset)
   {
-    paint.setShader(SkGradientShader::MakeRadial(convert_to<SkPoint>(radial.center + offset),
+#ifndef SKUI_USE_IMX8
+      paint.setShader(SkGradientShader::MakeRadial(convert_to<SkPoint>(radial.center + offset),
                                                  radial.radius,
                                                  convert_to<std::vector<SkColor>>(radial.colors).data(),
                                                  nullptr,
                                                  static_cast<int>(radial.positions.size()),
                                                  SkTileMode::kMirror));
+#else
+      paint.setShader(SkGradientShader::MakeRadial(convert_to<SkPoint>(radial.center + offset),
+                                                   radial.radius,
+                                                   convert_to<std::vector<SkColor>>(radial.colors).data(),
+                                                   nullptr,
+                                                   static_cast<int>(radial.positions.size()),
+                                                   SkShader::TileMode::kMirror_TileMode));
+#endif
   }
 
   void set_gradient(const sweep_gradient& sweep,
@@ -82,7 +101,8 @@ namespace skui::graphics
                     SkPaint& paint,
                     const scalar_position& offset)
   {
-    paint.setShader(SkGradientShader::MakeTwoPointConical(convert_to<SkPoint>(conical.start + offset),
+#ifndef SKUI_USE_IMX8
+      paint.setShader(SkGradientShader::MakeTwoPointConical(convert_to<SkPoint>(conical.start + offset),
                                                           conical.start_radius,
                                                           convert_to<SkPoint>(conical.end + offset),
                                                           conical.end_radius,
@@ -90,5 +110,15 @@ namespace skui::graphics
                                                           nullptr,
                                                           static_cast<int>(conical.colors.size()),
                                                           SkTileMode::kMirror));
+#else
+      paint.setShader(SkGradientShader::MakeTwoPointConical(convert_to<SkPoint>(conical.start + offset),
+                                                            conical.start_radius,
+                                                            convert_to<SkPoint>(conical.end + offset),
+                                                            conical.end_radius,
+                                                            convert_to<std::vector<SkColor>>(conical.colors).data(),
+                                                            nullptr,
+                                                            static_cast<int>(conical.colors.size()),
+                                                            SkShader::TileMode::kMirror_TileMode));
+#endif
   }
 }

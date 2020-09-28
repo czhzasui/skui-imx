@@ -33,6 +33,7 @@
 #include <include/effects/SkGradientShader.h>
 #include <include/core/SkSurface.h>
 
+#ifndef SKUI_USE_IMX8
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -43,6 +44,11 @@
 #include <GL/gl.h>
 #endif
 #include <GL/glext.h>
+#else
+#include <GLES/gl.h>
+#include <GLES/glext.h>
+#include <GLES3/gl3.h>
+#endif
 
 namespace skui::graphics
 {
