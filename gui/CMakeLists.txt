@@ -38,6 +38,7 @@ set(gui_src
     main_windows.c++
     make_element.h++
     window.h++ window.c++
+               window_imx.c++
                window_linux.c++
                window_macosx.c++
                window_windows.c++
@@ -52,12 +53,14 @@ set(element_src
    )
 set(events_src
     events.h++ events.c++ events_linux.c++
+                          events_imx.c++
                           events_macosx.c++
                           events_windows.c++
     events/appkit.h++ events/appkit.c++
     events/uikit.h++ events/uikit.c++
     events/win32.h++ events/win32.c++
     events/xcb.h++ events/xcb.c++
+    events/imx.h++ events/imx.c++
    )
 set(input_src
     input.h++
@@ -73,6 +76,7 @@ set(layout_src
    )
 set(native_window_src
     native_window.h++ native_window.c++
+                      native_window_imx.c++
                       native_window_linux.c++
                       native_window_macosx.c++
                       native_window_windows.c++
@@ -81,6 +85,7 @@ set(native_window_src
     native_window/win32.h++ native_window/win32.c++
     native_window/xcb.h++ native_window/xcb.c++
     native_window/xlib.h++ native_window/xlib.c++
+    native_window/imx.h++ native_window/imx.c++
    )
 set(native_visual_src
     native_visual.h++ native_visual.c++
@@ -92,6 +97,7 @@ set(native_visual_src
     native_visual/wgl.h++ native_visual/wgl.c++
     native_visual/win32.h++ native_visual/win32.c++
     native_visual/xcb.h++ native_visual/xcb.c++
+    native_visual/imx.h++ native_visual/imx.c++
    )
 source_group("" FILES ${gui_src})
 source_group(element FILES ${element_src})
@@ -111,7 +117,11 @@ add_library(gui
             ${native_window_src}
             ${native_visual_src}
            )
-target_link_libraries(gui PUBLIC core graphics)
+if (NOT SKUI_USE_IMX8)
+    target_link_libraries(gui PUBLIC core graphics)
+else()
+    target_link_libraries(gui PUBLIC core graphics -lasurface -lEGL)
+endif()
 target_compile_definitions(gui PRIVATE $<$<PLATFORM_ID:Windows>:NOMINMAX>)
 
 # Platform specific files and libraries
@@ -148,28 +158,47 @@ if(NOT UNIX OR APPLE)
                      window_linux.c++)
 endif()
 
-if(XCB_FOUND)
-  target_link_libraries(gui PUBLIC XCB::XCB XCB::AUX XCB::IMAGE)
-else()
+if(SKUI_USE_IMX8)
   exclude_from_build(events/xcb.h++ events/xcb.c++
-                     native_window/xcb.h++ native_window/xcb.c++
-                     native_visual/xcb.h++ native_visual/xcb.c++)
-endif()
-
-if(GLX_FOUND)
-  target_link_libraries(gui PUBLIC GLX)
+          events_linux.c++
+          native_visual/glx.h++ native_visual/glx.c++
+          native_visual/xcb.h++ native_visual/xcb.c++
+          native_window/xcb.h++ native_window/xcb.c++
+          native_window/xlib.h++ native_window/xlib.c++
+          native_window_linux.c++
+          window_linux.c++)
 else()
-  exclude_from_build(native_visual/glx.h++ native_visual/glx.c++)
-endif()
+    exclude_from_build(events/xcb.h++ events/imx.c++
+            events_imx.c++
+            native_visual/imx.h++ native_visual/imx.c++
+            native_window/imx.h++ native_window/imx.c++
+            native_window_imx.c++
+            window_imx.c++)
 
-if(EGL_FOUND)
-  target_link_libraries(gui PUBLIC EGL::EGL)
-else()
-  exclude_from_build(native_visual/egl.h++ native_visual/egl.c++)
-endif()
+    if (XCB_FOUND)
+        target_link_libraries(gui PUBLIC XCB::XCB XCB::AUX XCB::IMAGE)
+    else ()
+        exclude_from_build(events/xcb.h++ events/xcb.c++
+                native_window/xcb.h++ native_window/xcb.c++
+                native_visual/xcb.h++ native_visual/xcb.c++)
+    endif ()
 
-if(X11_FOUND AND X11_XCB_FOUND)
-  target_link_libraries(gui PUBLIC ${X11_LIBRARIES} X11::XCB)
-else()
-  exclude_from_build(native_window/xlib.h++ native_window/xlib.c++)
+    if (GLX_FOUND)
+        target_link_libraries(gui PUBLIC GLX)
+    else ()
+        exclude_from_build(native_visual/glx.h++ native_visual/glx.c++)
+    endif ()
+
+    if (EGL_FOUND)
+        target_link_libraries(gui PUBLIC EGL::EGL)
+    else ()
+        exclude_from_build(native_visual/egl.h++ native_visual/egl.c++)
+    endif ()
+
+    if (X11_FOUND AND X11_XCB_FOUND)
+        target_link_libraries(gui PUBLIC ${X11_LIBRARIES} X11::XCB)
+    else ()
+        exclude_from_build(native_window/xlib.h++ native_window/xlib.c++)
+    endif ()
+
 endif()
