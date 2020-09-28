@@ -30,3 +30,8 @@
 
 # Qt Creator user files
 *.user
+
+#others
+.idea
+cmake-build-debug
+cmake-build-release
